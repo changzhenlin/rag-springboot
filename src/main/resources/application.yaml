@@ -1,0 +1,53 @@
+spring:
+  application:
+    name: rag-springboot
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+# Milvus向量数据库配置
+milvus:
+  host: localhost
+  port: 19530
+  username: ""
+  password: ""
+  collection-name: rag_documents
+  dimension: 1536
+  index-type: IVF_FLAT
+  metric-type: COSINE
+
+# Spring AI配置
+spring.ai:
+  # OpenAI配置 (LLM + Embedding)
+  openai:
+    api-key: ${OPENAI_API_KEY:your-api-key-here}
+    base-url: ${OPENAI_BASE_URL:https://api.openai.com}
+    chat:
+      options:
+        model: gpt-4o
+        temperature: 0.7
+    embedding:
+      options:
+        model: text-embedding-3-small
+
+  # Milvus VectorStore配置
+  vectorstore:
+    milvus:
+      database-name: default
+      initialize-schema: true
+      primary-field: id
+      vector-field: embedding
+      text-field: content
+      metadata-field: metadata
+
+# 服务器配置
+server:
+  port: 8080
+
+# 日志配置
+logging:
+  level:
+    com.example.ragspringboot: DEBUG
+    org.springframework.ai: INFO
+    io.milvus: INFO
