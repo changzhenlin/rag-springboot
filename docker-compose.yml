@@ -65,8 +65,6 @@ services:
       - milvus
     networks:
       - milvus
-    profiles:
-      - with-ui
 
 networks:
   milvus:

@@ -17,29 +17,15 @@ milvus:
   index-type: IVF_FLAT
   metric-type: COSINE
 
-# Spring AI配置
+# Spring AI 配置
 spring.ai:
-  # OpenAI配置 (LLM + Embedding)
-  openai:
-    api-key: ${OPENAI_API_KEY:your-api-key-here}
-    base-url: ${OPENAI_BASE_URL:https://api.openai.com}
+  # DashScope 配置（通义千问 Qwen 模型）
+  dashscope:
+    api-key: ${DASHSCOPE_API_KEY:""}
     chat:
       options:
-        model: gpt-4o
+        model: qwen-max
         temperature: 0.7
-    embedding:
-      options:
-        model: text-embedding-3-small
-
-  # Milvus VectorStore配置
-  vectorstore:
-    milvus:
-      database-name: default
-      initialize-schema: true
-      primary-field: id
-      vector-field: embedding
-      text-field: content
-      metadata-field: metadata
 
 # 服务器配置
 server:

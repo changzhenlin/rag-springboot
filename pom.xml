@@ -16,7 +16,8 @@
 
     <properties>
         <java.version>21</java.version>
-        <spring-ai.version>1.0.0-M4</spring-ai.version>
+        <spring-ai.version>1.0.0-M6</spring-ai.version>
+        <spring-ai-alibaba.version>1.0.0-M6.1</spring-ai-alibaba.version>
         <milvus.version>2.3.4</milvus.version>
         <tika.version>2.9.1</tika.version>
     </properties>
@@ -41,11 +42,11 @@
             <version>${spring-ai.version}</version>
         </dependency>
 
-        <!-- Spring AI OpenAI (LLM + Embedding) -->
+        <!-- Spring AI Alibaba DashScope (通义千问 Qwen) -->
         <dependency>
-            <groupId>org.springframework.ai</groupId>
-            <artifactId>spring-ai-openai-spring-boot-starter</artifactId>
-            <version>${spring-ai.version}</version>
+            <groupId>com.alibaba.cloud.ai</groupId>
+            <artifactId>spring-ai-alibaba-starter</artifactId>
+            <version>${spring-ai-alibaba.version}</version>
         </dependency>
 
         <!-- Spring AI VectorStore - Milvus -->
@@ -102,10 +103,17 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- YAML配置支持 -->
+        <!-- YAML 配置支持 -->
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
+        </dependency>
+    
+        <!-- Spring DotEnv - 支持 .env 文件 -->
+        <dependency>
+            <groupId>me.paulschwarz</groupId>
+            <artifactId>spring-dotenv</artifactId>
+            <version>4.0.0</version>
         </dependency>
     </dependencies>
 
@@ -134,6 +142,11 @@
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
+        </repository>
+        <repository>
+            <id>central</id>
+            <name>Maven Central</name>
+            <url>https://repo.maven.apache.org/maven2</url>
         </repository>
     </repositories>
 </project>

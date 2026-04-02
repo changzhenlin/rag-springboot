@@ -3,8 +3,9 @@ package com.example.ragspringboot.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.client.advisor.RetrivalAdvisor;
+import org.springframework.ai.chat.client.advisor.QuestionAnswerAdvisor;
 import org.springframework.ai.chat.model.ChatModel;
+import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.stereotype.Service;
 
@@ -39,7 +40,7 @@ public class RagService {
         String response = chatClient.prompt()
                 .system(systemPrompt)
                 .user(question)
-                .advisors(new RetrivalAdvisor(vectorStore))
+                .advisors(QuestionAnswerAdvisor.builder(vectorStore).build())
                 .call()
                 .content();
         
@@ -66,7 +67,7 @@ public class RagService {
         String response = chatClient.prompt()
                 .system(systemPrompt)
                 .user(question)
-                .advisors(new RetrivalAdvisor(vectorStore,RetrivalAdvisor.builder().topK(topK).build()))
+                .advisors(QuestionAnswerAdvisor.builder(vectorStore).searchRequest(SearchRequest.builder().topK(topK).build()).build())
                 .call()
                 .content();
         

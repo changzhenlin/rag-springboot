@@ -1,13 +1,14 @@
 package com.example.ragspringboot.config;
 
 import io.milvus.client.MilvusClient;
+import io.milvus.client.MilvusServiceClient;
 import io.milvus.param.ConnectParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.ai.reader.tika.TikaDocumentReader;
+import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.transformer.splitter.TokenTextSplitter;
-import org.springframework.ai.vectorstore.MilvusVectorStore;
 import org.springframework.ai.vectorstore.VectorStore;
+import org.springframework.ai.vectorstore.milvus.MilvusVectorStore;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,11 +23,11 @@ public class MilvusConfig {
     
     private final MilvusProperties milvusProperties;
     
-    @Value("${spring.ai.openai.api-key}")
-    private String openAiApiKey;
+    @Value("${spring.ai.dashscope.api-key}")
+    private String dashScopeApiKey;
     
     /**
-     * 创建Milvus客户端
+     * 创建 Milvus 客户端
      */
     @Bean
     public MilvusClient milvusClient() {
@@ -35,23 +36,22 @@ public class MilvusConfig {
                 .withPort(milvusProperties.getPort());
         
         if (milvusProperties.getUsername() != null && !milvusProperties.getUsername().isEmpty()) {
-            builder.withUsername(milvusProperties.getUsername())
-                   .withPassword(milvusProperties.getPassword());
+            builder.withAuthorization(milvusProperties.getUsername(), milvusProperties.getPassword());
         }
         
-        log.info("连接Milvus: {}:{}", milvusProperties.getHost(), milvusProperties.getPort());
-        return new MilvusClient(builder.build());
+        log.info("连接 Milvus：{}:{}", milvusProperties.getHost(), milvusProperties.getPort());
+        return new MilvusServiceClient(builder.build());
     }
     
     /**
-     * 创建Milvus向量存储
+     * 创建 Milvus 向量存储
      */
     @Bean
-    public VectorStore vectorStore(MilvusClient milvusClient) {
-        return MilvusVectorStore.builder()
-                .milvusClient(milvusClient)
+    public VectorStore vectorStore(MilvusClient milvusClient, EmbeddingModel embeddingModel) {
+        return MilvusVectorStore.builder((MilvusServiceClient) milvusClient, embeddingModel)
                 .collectionName(milvusProperties.getCollectionName())
-                .dimension(milvusProperties.getDimension())
+                .embeddingDimension(milvusProperties.getDimension())
+                .initializeSchema(true)
                 .build();
     }
     
@@ -60,13 +60,6 @@ public class MilvusConfig {
      */
     @Bean
     public TokenTextSplitter tokenTextSplitter() {
-        return new TokenTextSplitter(
-                500,    // minChunkSizeChars
-                300,    // minChunkLengthToEmbed
-                200,    // minLeftChunkSizeChars
-                512,    // maxNumChunks
-                true,   // trackPartialChunks
-                0.2f    // chunkOverlapPercentage
-        );
+        return new TokenTextSplitter();
     }
 }

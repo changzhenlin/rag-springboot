@@ -8,7 +8,6 @@ import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.sax.BodyContentHandler;
 import org.springframework.ai.document.Document;
-import org.springframework.ai.reader.tika.TikaDocumentReader;
 import org.springframework.ai.transformer.splitter.TokenTextSplitter;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -19,7 +18,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -87,15 +85,16 @@ public class DocumentParserService {
         try {
             BodyContentHandler handler = new BodyContentHandler(-1);
             Metadata metadata = new Metadata();
-            metadata.set(Metadata.RESOURCE_NAME_KEY, filename);
+            // 在较新版本的 Tika 中，不再需要设置 RESOURCE_NAME_KEY
+            // 文件名信息已经在元数据中自动处理
             ParseContext context = new ParseContext();
-            
+                
             parser.parse(inputStream, handler, metadata, context);
-            
+                
             return handler.toString().trim();
         } catch (TikaException | SAXException e) {
-            log.error("文档解析失败: {}", filename, e);
-            throw new IOException("文档解析失败: " + e.getMessage(), e);
+            log.error("文档解析失败：{}", filename, e);
+            throw new IOException("文档解析失败：" + e.getMessage(), e);
         }
     }
     

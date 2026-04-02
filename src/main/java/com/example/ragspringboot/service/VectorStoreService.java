@@ -3,6 +3,7 @@ package com.example.ragspringboot.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.document.Document;
+import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.stereotype.Service;
 
@@ -40,14 +41,24 @@ public class VectorStoreService {
      * 相似度搜索
      */
     public List<Document> similaritySearch(String query, int topK) {
-        log.info("执行相似度搜索: {}, topK: {}", query, topK);
-        return vectorStore.similaritySearch(query, topK);
+        log.info("执行相似度搜索：{}, topK: {}", query, topK);
+        return vectorStore.similaritySearch(
+            SearchRequest.builder()
+                .query(query)
+                .topK(topK)
+                .build()
+        );
     }
-    
+        
     /**
      * 检查向量库是否包含文档
      */
     public boolean hasDocuments() {
-        return !vectorStore.similaritySearch("", 1).isEmpty();
+        return !vectorStore.similaritySearch(
+            SearchRequest.builder()
+                .query("")
+                .topK(1)
+                .build()
+        ).isEmpty();
     }
 }
